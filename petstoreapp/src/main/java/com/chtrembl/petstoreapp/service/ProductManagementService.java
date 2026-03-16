@@ -56,12 +56,19 @@ public class ProductManagementService {
                         .filter(product -> category.equals(product.getCategory().getName())
                                 && product.getTags().toString().contains("large"))
                         .toList();
+                this.sessionUser.getTelemetryClient().trackEvent(
+                        String.format("Retrieving products with tag 'large' for PetStoreApp user %s from the ProductService",
+                                this.sessionUser.getName()),
+                        this.sessionUser.getCustomEventProperties(), null);
             } else {
                 products = products.stream()
                         .filter(product -> category.equals(product.getCategory().getName())
                                 && product.getTags().toString().contains("small"))
                         .toList();
             }
+
+            log.info("Number of returned items - {}", products.size());
+            this.sessionUser.getTelemetryClient().trackMetric("AvailableProductsFound_"+category, products.size());
 
             log.info("Successfully retrieved {} products for category {} with tags {} [RequestID: {}, TraceID: {}]",
                     products.size(), category, tags, requestId, traceId);
