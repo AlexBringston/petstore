@@ -41,9 +41,9 @@ public class ProductManagementService {
 
         log.info("Starting product retrieval operation [RequestID: {}, TraceID: {}, Category: {}]",
                 requestId, traceId, category);
-
         try {
-            this.sessionUser.getTelemetryClient().trackEvent(
+            throw new Exception("Cannot move further");
+            /*this.sessionUser.getTelemetryClient().trackEvent(
                     String.format("PetStoreApp user %s is requesting to retrieve products from the ProductService",
                             this.sessionUser.getName()),
                     this.sessionUser.getCustomEventProperties(), null);
@@ -73,7 +73,7 @@ public class ProductManagementService {
             log.info("Successfully retrieved {} products for category {} with tags {} [RequestID: {}, TraceID: {}]",
                     products.size(), category, tags, requestId, traceId);
 
-            return products;
+            return products;*/
         } catch (FeignException fe) {
             log.error("Feign error retrieving products [RequestID: {}, TraceID: {}, Category: {}, HTTP: {}, Message: {}]",
                     requestId, traceId, category, fe.status(), fe.getMessage(), fe);
@@ -88,6 +88,8 @@ public class ProductManagementService {
             );
             log.error("Failed to retrieve products from ProductService via Feign client", fe);
             throw new ProductServiceException("Unable to retrieve products from product service", fe);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             MDC.remove(OPERATION);
             MDC.remove(CATEGORY);
