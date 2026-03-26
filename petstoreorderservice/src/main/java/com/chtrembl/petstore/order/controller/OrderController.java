@@ -2,8 +2,11 @@ package com.chtrembl.petstore.order.controller;
 
 import com.chtrembl.petstore.order.model.Order;
 import com.chtrembl.petstore.order.model.Product;
+import com.chtrembl.petstore.order.service.OrderItemsReserverService;
 import com.chtrembl.petstore.order.service.OrderService;
 import com.chtrembl.petstore.order.service.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,9 +27,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/petstoreorderservice/v2")
 @Slf4j
@@ -37,6 +40,7 @@ public class OrderController {
 
     private final OrderService orderService;
     private final ProductService productService;
+    private final OrderItemsReserverService orderItemsReserverService;
 
     @Operation(
             summary = "Place an order for a product",
@@ -62,7 +66,14 @@ public class OrderController {
         // Enrich order with product details from product service
         List<Product> availableProducts = productService.getAvailableProducts();
         orderService.enrichOrderWithProductDetails(updatedOrder, availableProducts);
-        
+
+        try {
+            String resultJSON  = serializeOrder(updatedOrder);
+            orderItemsReserverService.reserveOrderItems(resultJSON, updatedOrder.getId());
+        } catch (Exception exception) {
+            log.error("Could not update cart JSON in storage.", exception);
+        }
+
         log.info("Successfully processed order: {}", updatedOrder.getId());
 
         return ResponseEntity.ok(updatedOrder);
@@ -97,5 +108,13 @@ public class OrderController {
         log.info("Successfully retrieved order: {}", order);
 
         return ResponseEntity.ok(order);
+    }
+
+    private String serializeOrder(Order order) throws Exception {
+        return new ObjectMapper()
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false)
+                .writeValueAsString(order);
     }
 }
