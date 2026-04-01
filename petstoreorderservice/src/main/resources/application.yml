@@ -9,6 +9,14 @@ petstore:
     product:
       url: ${PETSTOREPRODUCTSERVICE_URL:http://localhost:8082}
 
+azure:
+  cosmos:
+    db:
+      endpoint: https://ompetstorecosmosdbaccount.documents.azure.com:443/
+      database: testDatabase
+      key: testKey
+
+
 springdoc:
   api-docs:
     path: /api-docs
