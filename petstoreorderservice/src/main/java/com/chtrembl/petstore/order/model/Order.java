@@ -1,5 +1,7 @@
 package com.chtrembl.petstore.order.model;
 
+import com.azure.spring.data.cosmos.core.mapping.Container;
+import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +24,7 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode(exclude = {"products"})
 @Schema(description = "Order entity representing a customer order")
+@Container(containerName = "orders", autoCreateContainer = true)
 public class Order {
 
 	@NotNull(message = "Order ID cannot be null")
@@ -46,6 +49,7 @@ public class Order {
 	private List<Product> products = new ArrayList<>();
 
 	@Schema(description = "Order status", example = "placed")
+	@PartitionKey
 	private Status status;
 
 	@Builder.Default
