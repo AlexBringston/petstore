@@ -3,12 +3,23 @@ package com.chtrembl.petstore.pet.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +28,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity(name = "pet")
 public class Pet {
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Valid
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Category category;
 
     @NotNull
@@ -32,8 +47,15 @@ public class Pet {
 
     @Valid
     @Builder.Default
+    @ManyToMany
+    @JoinTable(
+            name = "pet_tag",
+            joinColumns = @JoinColumn(name = "pet_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @ColumnTransformer(read = "UPPER(status)")
     private Status status;
 
     public Pet name(String name) {
@@ -71,5 +93,16 @@ public class Pet {
         public String toString() {
             return String.valueOf(value);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Pet{" +
+                "id=" + id +
+                ", category=" + category +
+                ", name='" + name + '\'' +
+                ", photoURL='" + photoURL + '\'' +
+                ", status=" + status +
+                '}';
     }
 }
