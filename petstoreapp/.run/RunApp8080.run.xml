@@ -5,14 +5,14 @@
       <env name="PETSTOREPETSERVICE_URL" value="http://localhost:8081" />
       <env name="PETSTOREPRODUCTSERVICE_URL" value="http://localhost:8082" />
       <env name="PETSTOREORDERSERVICE_URL" value="http://localhost:8083" />
-      <env name="APPLICATIONINSIGHTS_ENABLED" value="false"/>
-      <env name="PETSTORE_SECURITY_ENABLED" value="false"/>
-      <env name="AZURE_CLIENT_ID" value="your-external-id-client-id"/>
-      <env name="AZURE_CLIENT_SECRET" value="your-external-id-secret"/>
-      <env name="AZURE_TENANT_DOMAIN" value="your-tenant-name"/>
+      <env name="APPLICATIONINSIGHTS_ENABLED" value="false" />
+      <env name="PETSTORE_SECURITY_ENABLED" value="true" />
+      <env name="AZURE_TENANT_DOMAIN" value="ompetstoredomain" />
+      <env name="AZURE_CLIENT_ID" value="912b9394-669e-4ef7-8de5-df3cabe6a8c2" />
+      <env name="AZURE_CLIENT_SECRET" value="mk_8Q~ifZuYY229_QZLqyikKq0EJYQm0liJn1ci2" />
     </envs>
-    <module name="petstoreapp" />
     <option name="MAIN_CLASS_NAME" value="com.chtrembl.petstoreapp.PetStoreApplication"/>
+    <module name="petstoreapp" />
     <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
     <method v="2">
       <option name="Make" enabled="true" />
