@@ -22,9 +22,6 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class OrderItemsReserverService {
 
-
-    @Value("${petstore.service.order.item.reserver.url:http://localhost:7071}")
-    private String azureFunctionUrl;
     @Value("${petstore.service.order.item.reserver.namespace}")
     private String fullNamespace;
     @Value("${petstore.service.order.item.reserver.queue}")
